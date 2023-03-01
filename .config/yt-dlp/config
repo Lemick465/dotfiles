@@ -12,10 +12,10 @@
 # (For video, mp4 > webm > flv. For audio, m4a > aac > mp3 ...)
 -S "ext"
 
-# Download the video with the largest resolution no better than 720p,
+# Download the video with the largest resolution no better than 1080p,
 # or the video with the smallest resolution available if there is no such video,
 # preferring larger framerate for formats with the same resolution
--S "res:720,fps"
+-S "res:1080,fps"
 
 # Save all videos under YouTube directory in your home directory
 -o ~/Videos/yt-dlp/%(title)s.%(ext)s
