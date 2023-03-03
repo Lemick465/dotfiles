@@ -25,5 +25,5 @@ git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntra
 # config commit -m 'Add gitconfig'
 # config push
 
-. "$HOME/.utils/create_videoclip_dir.sh"
+. "$HOME/.utils/replace_placeholder.sh"
 . "$HOME/.utils/setup.sh"
