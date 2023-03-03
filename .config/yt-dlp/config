@@ -18,4 +18,4 @@
 -S "res:1080,fps"
 
 # Save all videos under YouTube directory in your home directory
--o ~/Videos/yt-dlp/%(title)s.%(ext)s
+-o ~/Videos/%(title)s.%(ext)s
