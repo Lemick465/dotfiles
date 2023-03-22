@@ -1,9 +1,21 @@
-# external downloader aria2
+# External downloader aria2
 # --downloader aria2c --downloader-args aria2c:'-c -j 3 -x 3 -s 3 -k 1M'
 --downloader aria2c
 
+# Write automatically generated subtitle file
+--write-auto-subs
+
 # Embed subtitles in the video (only for mp4, webm and mkv videos)
 --embed-subs
+
+# Subtitle format; accepts formats preference,e.g. "srt" or "ass/srt/best"
+--sub-format "ass/srt/best"
+
+# Languages of the subtitles to download
+--sub-langs "en.*"
+
+# Convert the subtitles to another format
+--convert-subs "srt"
 
 # SponsorBlock categories to create chapters
 --sponsorblock-mark all
