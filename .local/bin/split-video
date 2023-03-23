@@ -1,0 +1,47 @@
+# !/bin/bash
+
+# https://stackoverflow.com/questions/30305953/is-there-an-elegant-way-to-split-a-file-by-chapter-using-ffmpeg
+
+# split videos based on chapters
+# this create a directory to store splitted videos
+# Example ./split video.mp4
+
+# Check if an input file was provided
+if [ -z "$1" ]
+then
+  echo "Error: No input file provided"
+  exit 1
+fi
+
+# Check if the input file exists
+if [ ! -f "$1" ]
+then
+  echo "Error: Input file not found"
+  exit 1
+fi
+
+input_file="$1"
+basename=$(basename "$input_file")
+mkdir "${basename%.*}"
+dir_path="${basename%.*}"
+chapter_number=0
+
+ffprobe \
+    -print_format csv \
+    -show_chapters \
+    "$input_file" |
+cut -d ',' -f '5,7,8' |
+
+while IFS=, read start_time end_time chapter_name
+do
+    ffmpeg \
+        -nostdin \
+        -ss "$start_time" -to "$end_time" \
+        -i "$input_file" \
+        -c copy \
+        -map 0 \
+        -map_chapters -1 \
+        "${dir_path}/${chapter_number}-$chapter_name.${input_file##*.}"
+
+    chapter_number=$((chapter_number+=1))
+done
