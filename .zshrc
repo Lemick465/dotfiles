@@ -89,6 +89,7 @@ man
 zsh-autosuggestions
 zsh-syntax-highlighting
 zsh-vi-mode
+zoxide
 )
 
 source $ZSH/oh-my-zsh.sh
