@@ -31,6 +31,9 @@ if [ -d "$HOME/.oh-my-zsh" ]; then
 
     # powerline10k
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+
+    # zoxide
+    curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
 fi
 
 # replace .zshrc file created by oh-my-zsh
