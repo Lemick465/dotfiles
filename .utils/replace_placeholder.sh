@@ -11,5 +11,4 @@ replace_placeholder(){
 	fi
 }
 
-
 replace_placeholder

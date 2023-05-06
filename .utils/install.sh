@@ -5,25 +5,18 @@
 # https://news.ycombinator.com/item?id=11070797
 # https://github.com/Siilwyn/my-dotfiles/tree/master/.my-dotfiles
 
-# setup
-# git init --bare $HOME/.dotfiles
-# alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-# config config --local status.showUntrackedFiles no
-# config remote add origin https://github.com/<username>/.dotfiles.git
-# config push --set-upstream origin main
-
-# replication
+# Clone dotfiles repo into a temporary directory
 git clone --separate-git-dir=$HOME/.dotfiles https://github.com/lemick465/.dotfiles.git dotfiles-tmp
+
+# Copy dotfiles from the temporary directory to the home directory
 rsync --recursive --verbose --exclude '.git' dotfiles-tmp/ $HOME/
+
+# Clean up the temporary directory
 rm --recursive --force dotfiles-tmp
 
+# Configure dotfiles repo to hide untracked files
 git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no
 
-# usage
-# config status
-# config add .gitconfig
-# config commit -m 'Add gitconfig'
-# config push
-
+# Source helper scripts
 . "$HOME/.utils/replace_placeholder.sh"
 . "$HOME/.utils/setup.sh"
