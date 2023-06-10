@@ -1,0 +1,123 @@
+#!/bin/bash
+
+shellrc="$HOME/.profile"
+default_no_proxy="localhost,127.0.0.1"
+
+set_proxy() {
+
+    # Proxy configuration variables
+    if [ $# -eq 2 ]; then
+        proxy_ip="$1"
+        proxy_port="$2"
+    else
+        read -p "Enter the IP address of the proxy server: " proxy_ip
+        read -p "Enter the port of the proxy server: " proxy_port
+    fi
+
+    http_proxy="http://$proxy_ip:$proxy_port"
+    https_proxy="${http_proxy}"
+
+    add_empty_line
+
+    # Configure proxy settings in shell
+    cat <<EOF >>"$shellrc"
+export http_proxy=$http_proxy
+export https_proxy=$https_proxy
+export no_proxy=$default_no_proxy
+
+EOF
+
+    # Configure proxy settings in GNOME settings
+    gsettings set org.gnome.system.proxy mode 'manual'
+    gsettings set org.gnome.system.proxy.http host $proxy_ip
+    gsettings set org.gnome.system.proxy.http port $proxy_port
+    gsettings set org.gnome.system.proxy.https host $proxy_ip
+    gsettings set org.gnome.system.proxy.https port $proxy_port
+    gsettings set org.gnome.system.proxy ignore-hosts "['$default_no_proxy']"
+
+    # Configure proxy settings for APT
+    sudo sh -c "echo 'Acquire::http::proxy \"$http_proxy\";' >/etc/apt/apt.conf.d/proxy"
+    sudo sh -c "echo 'Acquire::https::proxy \"$https_proxy\";' >>/etc/apt/apt.conf.d/proxy"
+    sudo sh -c "echo 'Acquire::ftp::proxy \"$http_proxy\";' >>/etc/apt/apt.conf.d/proxy"
+
+    # Reload shell settings
+    source "$shellrc"
+}
+
+unset_proxy() {
+
+    # Remove proxy settings from shell
+    for proxytype in "http" "https" "ftp" "no"; do
+        sed -i "/export ${proxytype}_proxy\=/d" "$shellrc"
+    done
+
+    # Remove proxy settings from GNOME settings
+    gsettings set org.gnome.system.proxy mode 'none'
+
+    # Remove proxy settings for APT
+    sudo rm /etc/apt/apt.conf.d/proxy
+
+    # Set default no_proxy value
+    no_proxy="$default_no_proxy"
+
+    # Reload shell settings
+    source "$shellrc"
+}
+
+add_empty_line() {
+    # Check if file has multiple empty lines and trim them
+    sed -i -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$shellrc"
+
+    # Check if file has one empty line and keep it
+    if [ -s "$shellrc" ] && [ -z "$(tail -c 1 "$shellrc")" ]; then
+        echo "" >>"$shellrc"
+    fi
+}
+
+save_configuration() {
+    if [ -z "$proxy_ip" ] || [ -z "$proxy_port" ]; then
+        echo "Error: proxy settings not set."
+        return 1
+    fi
+
+    read -p "Do you want to save the current proxy configuration? (y/n) " save_choice
+    if [ "$save_choice" != "y" ]; then
+        echo "Proxy configuration not saved"
+        return
+    fi
+
+    if ! echo "proxy_ip=$proxy_ip" >"$HOME/.proxyconfig" || ! echo "proxy_port=$proxy_port" >>"$HOME/.proxyconfig"; then
+        echo "Error: failed to save proxy configuration."
+        return 1
+    fi
+
+    echo "Proxy configuration saved to $HOME/.proxyconfig"
+}
+
+load_proxy() {
+    if [ -f "$HOME/.proxyconfig" ]; then
+        # Load proxy settings from configuration file
+        source "$HOME/.proxyconfig"
+        set_proxy "$proxy_ip" "$proxy_port"
+        echo "Configuration loaded successfully"
+    fi
+}
+
+option=$1
+
+case $option in
+set)
+    set_proxy
+    save_configuration
+    ;;
+unset)
+    unset_proxy
+    ;;
+load)
+    load_proxy
+    ;;
+*)
+    echo "Error: Invalid option. Please enter 'set', 'unset', or 'load'."
+    exit 1
+    ;;
+esac
