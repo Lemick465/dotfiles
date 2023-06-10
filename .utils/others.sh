@@ -21,13 +21,11 @@ if ! command -v lf > /dev/null; then
 	curl -L https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz | tar xzC ~/.local/bin
 fi
 
-
 append_line(){
     LINE="$1"
     FILE="$2"
     `grep -qxF -- "$LINE" "$FILE" || echo -en "$LINE" >> "$FILE"`
 }
-
 
 # automatic CPU speed & power optimizer for linux
 install_auto_cpufreq(){
@@ -75,10 +73,8 @@ download_nerdfonts(){
 	# fc-list | grep "font-name"
 }
 
-
 # enable usb support in virutalbox
 # command -v virtualbox > /dev/null && sudo adduser $USER vboxusers
-
 
 install_vscode(){
 	if ! command -v code > /dev/null; then
@@ -100,44 +96,12 @@ install_vscode(){
 	fi
 }
 
-
-install_neovim(){
-	if ! command -v nvim > /dev/null; then
-        aria2c https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.deb
-        sudo apt install ./nvim-linux64.deb
-        rm nvim-linux64.deb
-	fi
-}
-
-
-install_lvim(){
-    if command -v nvim > /dev/null; then
-        #  Pre-requisites
-        sudo install -y ripgrep rust
-        sudo npm install -g tree-sitter-cli prettier
-        python3 -m pip install -U pynvim autopep8 flake8
-        cargo install stylua
-
-        bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh) --no-install-dependencies
-
-		if command -v lvim > /dev/null; then
-			append_line '\nalias nvim="lvim"\n' "$HOME/.aliases"
-		fi
-
-        # uninstall lvim
-        # bash ~/.local/share/lunarvim/lvim/utils/installer/uninstall.sh
-
-    fi
-}
-
-
 install_fzf(){
     if ! command -v fzf > /dev/null; then
         git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
         ~/.fzf/install --all
     fi
 }
-
 
 setup_tmux(){
     if command -v tmux > /dev/null; then
@@ -156,6 +120,18 @@ setup_tmux(){
     fi
 }
 
+install_java_sdk(){
+    # Installs java stable version 17
+    sudo add-apt-repository ppa:linuxuprising/java
+    sudo apt-get install oracle-java17-installer -y
+    sudo apt-get install oracle-java17-set-default
+}
+  
+install_node_lts(){
+    sudo apt purge nodejs -y # Delete default nodejs
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    sudo apt install nodejs -y
+}
 
 # install these packages when
 # MPEG-4 and H.264 (High Profile) decoders are required
