@@ -18,5 +18,5 @@ rm --recursive --force dotfiles-tmp
 git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no
 
 # Source helper scripts
-. "$HOME/.utils/replace_placeholder.sh"
+# . "$HOME/.utils/replace_placeholder.sh"
 . "$HOME/.utils/setup.sh"
