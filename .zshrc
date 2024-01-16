@@ -89,7 +89,6 @@ man
 zsh-autosuggestions
 zsh-syntax-highlighting
 zsh-vi-mode
-zoxide
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -105,7 +104,7 @@ source $ZSH/oh-my-zsh.sh
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
-#   export EDITOR='mvim'
+#   export EDITOR='nvim'
 # fi
 
 # Compilation flags
